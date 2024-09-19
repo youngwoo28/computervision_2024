@@ -1,0 +1,27 @@
+import cv2
+
+img = cv2.imread('soccer.jpg')
+
+brush_size = 1
+def onMouse(event, x, y, flags, param):
+    if event == cv2.EVENT_LBUTTONDOWN:
+        cv2.circle(img, (x,y), brush_size, (255,0,0), 3)
+        cv2.imshow('img', img)
+    if event == cv2.EVENT_RBUTTONDOWN:
+        cv2.circle(img, (x,y), brush_size, (0,0,255), 3)
+        cv2.imshow('img', img)
+    # 버튼을 누르고 이동하면
+    if event == cv2.EVENT_MOUsemove and flags == cv2.EVENT_FLAG_LBUTTON:
+        cv2.circle(img, (x, y), brush_size (255, 0 , 0), 3)
+        cv2.imshow('img', img)
+    if event == cv2.EVENT_MOUsemove and flags == cv2.EVENT_FLAG_RBUTTON:
+        cv2.circle(img, (x, y), brush_size (0, 0 , 255), 3)
+        cv2.imshow('img', img)
+    cv2.imshow('img', img)
+    
+        
+cv2.imshow('img', img)
+cv2.setMouseCallback('img', onMouse)
+
+cv2.waitKey(0)
+cv2.destroyAllWindows()

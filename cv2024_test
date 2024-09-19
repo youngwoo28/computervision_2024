@@ -1,0 +1,50 @@
+import cv2
+
+# 동영상 파일 열기
+cap = cv2.VideoCapture('video.mp4')
+
+# 첫 번째 프레임을 읽고 배경으로 설정
+ret, base_frame = cap.read()
+if not ret:
+    print("비디오를 읽을 수 없습니다.")
+    cap.release()
+    exit()
+
+# 초기 프레임 복사 및 그레이스케일 변환
+gray_base = cv2.cvtColor(base_frame, cv2.COLOR_BGR2GRAY)
+sequence_image = base_frame.copy()
+
+while True:
+    # 다음 프레임 읽기
+    ret, current_frame = cap.read()
+    if not ret:
+        break
+
+    # 현재 프레임을 그레이스케일로 변환
+    gray_current = cv2.cvtColor(current_frame, cv2.COLOR_BGR2GRAY)
+
+    # 배경과 현재 프레임 간의 차이 계산
+    diff = cv2.absdiff(gray_base, gray_current)
+
+    # 차이 이미지를 이진화하여 움직임을 감지
+    _, thresh = cv2.threshold(diff, 30, 255, cv2.THRESH_BINARY)
+
+    # 현재 프레임에서 움직임 영역만 추출
+    motion_area = cv2.bitwise_and(current_frame, current_frame, mask=thresh)
+
+    # 이전 시퀀스 이미지와 현재 모션 이미지를 합성
+    sequence_image = cv2.add(sequence_image, motion_area)
+
+    # 모션 이미지 업데이트 및 표시
+    cv2.imshow('Motion Image', sequence_image)
+
+    # ESC 키를 눌러 종료
+    if cv2.waitKey(30) == 27:
+        break
+
+# 최종 모션 이미지를 저장
+cv2.imwrite('motion_image.png', sequence_image)
+
+# 자원 해제
+cap.release()
+cv2.destroyAllWindows()
